@@ -23,5 +23,24 @@ export default (apiRoot, routes) => {
   app.use(queryErrorHandler())
   app.use(bodyErrorHandler())
 
+  app.use(function (err, req, res, next) {
+    if (err.errors) {
+      var firstProp
+      for (var key in err.errors) {
+        if (err.errors.hasOwnProperty(key)) {
+          firstProp = err.errors[key]
+          break
+        }
+      }
+      const returnJson = {
+        'name': firstProp.kind,
+        'param': firstProp.path,
+        'valid': false,
+        'message': firstProp.message
+      }
+      res.status(400).send(returnJson)
+    }
+  })
+
   return app
 }
