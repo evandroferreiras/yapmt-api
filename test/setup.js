@@ -26,7 +26,7 @@ let mongoServer
 beforeAll(async () => {
   mongoServer = new MongodbMemoryServer()
   const mongoUri = await mongoServer.getConnectionString()
-  await mongoose.connect(mongoUri, (err) => {
+  await mongoose.connect(mongoUri, { useNewUrlParser: true }, (err) => {
     if (err) console.error(err)
   })
 })
@@ -40,7 +40,7 @@ afterEach(async () => {
   const { collections } = mongoose.connection
   const promises = []
   Object.keys(collections).forEach((collection) => {
-    promises.push(collections[collection].remove())
+    promises.push(collections[collection].deleteMany())
   })
   await Promise.all(promises)
 })
