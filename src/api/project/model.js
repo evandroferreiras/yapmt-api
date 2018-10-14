@@ -16,7 +16,6 @@ const projectSchema = new Schema({
 projectSchema.methods = {
   view (full) {
     const view = {
-      // simple view
       id: this.id,
       title: this.title,
       createdAt: this.createdAt,
@@ -25,7 +24,6 @@ projectSchema.methods = {
 
     return full ? {
       ...view
-      // add properties for a full view
     } : view
   }
 }
