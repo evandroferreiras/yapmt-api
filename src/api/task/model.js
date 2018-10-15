@@ -74,6 +74,26 @@ taskSchema.methods = {
       return error
     }
   },
+  statusTask () {
+    try {
+      if (this.checked) {
+        return 'completed'
+      }
+      const year = new Date().getFullYear()
+      const date = new Date(`${year}/${this.dueTime}`).getTime()
+      if (isNaN(date)) {
+        return ''
+      }
+      const td = new Date()
+      if (date >= new Date(td.getFullYear(), td.getMonth(), td.getDate()).getTime()) {
+        return 'in-time'
+      } else {
+        return 'late'
+      }
+    } catch (error) {
+      return error
+    }
+  },
   view (full) {
     const view = {
       id: this.id,
@@ -85,7 +105,8 @@ taskSchema.methods = {
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
       project: this.project,
-      dueTimeStatus: this.dueTimeStatus()
+      dueTimeStatus: this.dueTimeStatus(),
+      statusTask: this.statusTask()
     }
 
     return full ? {

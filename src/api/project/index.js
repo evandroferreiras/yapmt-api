@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { middleware as query } from 'querymen'
 import { middleware as body } from 'bodymen'
-import { create, index, show, update, destroy } from './controller'
+import { create, index, show, update, destroy, summary } from './controller'
 import { schema } from './model'
 export Project, { schema } from './model'
 
@@ -18,6 +18,9 @@ router.get('/',
 
 router.get('/:id',
   show)
+
+router.get('/:id/summary',
+  summary)
 
 router.put('/:id',
   body({ title }),
