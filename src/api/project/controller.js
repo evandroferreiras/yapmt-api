@@ -42,3 +42,37 @@ export const destroy = ({ params }, res, next) =>
     .then(() => Task.deleteMany({ project: params.id }))
     .then(success(res, 204))
     .catch(next)
+
+export const summary = ({ params }, res, next) => {
+  return Task.countDocuments({ project: params.id, checked: true })
+    .then((el) => {
+      return el
+    }, () => {
+      return null
+    })
+    .then((tasks) => {
+      const obj = {
+        completed: tasks
+      }
+      return obj
+    })
+    .then((obj) => {
+      return Task.countDocuments({ project: params.id })
+        .then((tasks) => {
+          obj.total = tasks
+          return obj
+        })
+    })
+    .then((obj) => {
+      const td = new Date()
+      const yesterday = new Date(td.getFullYear(), td.getMonth(), td.getDate() - 1)
+      return Task.countDocuments({ project: params.id, 'dueTimeDate': { '$lte': yesterday } })
+        .then((tasks) => {
+          obj.late = tasks
+          return obj
+        })
+    })
+    .then(
+      success(res, 200)
+    )
+}

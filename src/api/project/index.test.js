@@ -3,6 +3,7 @@ import { apiRoot } from '../../config'
 import express from '../../services/express'
 import routes, { Project } from '.'
 import Task from '../task/model'
+import { dateMmDd } from '../../services/dateDdMm'
 
 const app = () => express(apiRoot, routes)
 
@@ -44,6 +45,29 @@ test('GET /projects/:id 200', async () => {
   expect(status).toBe(200)
   expect(typeof body).toEqual('object')
   expect(body.id).toEqual(project.id)
+})
+
+test('GET /projects/:id/summary 200', async () => {
+  const td = new Date()
+  const today = new Date(td.getFullYear(), td.getMonth(), td.getDate())
+  const dueTimeToday = dateMmDd(today)
+  const tomorrow = new Date(td.getFullYear(), td.getMonth(), td.getDate() + 1)
+  const dueTimeTomorrow = dateMmDd(tomorrow)
+  const yesterday = new Date(td.getFullYear(), td.getMonth(), td.getDate() - 1)
+  const dueTimeYesterday = dateMmDd(yesterday)
+
+  const newProject = await Project.create({'title': 'test'})
+  await Task.create({project: newProject.id, description: 'test', username: '@test', dueTimeDate: today, checked: true, dueTime: dueTimeToday})
+  await Task.create({project: newProject.id, description: 'test', username: '@test', dueTimeDate: tomorrow, dueTime: dueTimeTomorrow})
+  await Task.create({project: newProject.id, description: 'test', username: '@test', dueTimeDate: yesterday, dueTime: dueTimeYesterday})
+
+  const { status, body } = await request(app())
+    .get(`${apiRoot}/${newProject.id}/summary`)
+  expect(status).toBe(200)
+  expect(typeof body).toEqual('object')
+  expect(body.completed).toEqual(1)
+  expect(body.total).toEqual(3)
+  expect(body.late).toEqual(1)
 })
 
 test('GET /projects/:id 404', async () => {

@@ -3,21 +3,13 @@ import { apiRoot } from '../../config'
 import express from '../../services/express'
 import routes, { Task } from '.'
 import Project from '../project/model'
+import { dateMmDd } from '../../services/dateDdMm'
 
 const app = () => express(apiRoot, routes)
 
 let task
 let project
 let project2
-
-const dateDdMm = function dateDdMm (dt) {
-  var mm = dt.getMonth() + 1
-  var dd = dt.getDate()
-  return [
-    (mm > 9 ? '' : '0') + mm, '/',
-    (dd > 9 ? '' : '0') + dd
-  ].join('')
-}
 
 beforeEach(async () => {
   project = await Project.create({ title: 'test' })
@@ -38,49 +30,52 @@ test('POST /tasks 201', async () => {
 })
 
 test('POST /tasks 201 dueTimeStatus today', async () => {
-  const dueTime = dateDdMm(new Date())
+  const dueTime = dateMmDd(new Date())
   const { status, body } = await request(app())
     .post(`${apiRoot}`)
-    .send({ 'projectId': project.id, description: 'test', username: '@test', dueTime: dueTime, checked: true })
+    .send({ 'projectId': project.id, description: 'test', username: '@test', dueTime: dueTime, checked: false })
   expect(status).toBe(201)
   expect(typeof body).toEqual('object')
   expect(body.description).toEqual('test')
   expect(body.username).toEqual('@test')
   expect(body.dueTime).toEqual(dueTime)
   expect(body.dueTimeStatus).toEqual('today')
-  expect(body.checked).toEqual(true)
+  expect(body.statusTask).toEqual('in-time')
+  expect(body.checked).toEqual(false)
 })
 
 test('POST /tasks 201 dueTimeStatus tomorrow', async () => {
   const td = new Date()
   const tomorrow = new Date(td.getFullYear(), td.getMonth() + 1, td.getDate() + 1)
-  const dueTime = dateDdMm(tomorrow)
+  const dueTime = dateMmDd(tomorrow)
   const { status, body } = await request(app())
     .post(`${apiRoot}`)
-    .send({ 'projectId': project.id, description: 'test', username: '@test', dueTime: dueTime, checked: true })
+    .send({ 'projectId': project.id, description: 'test', username: '@test', dueTime: dueTime, checked: false })
   expect(status).toBe(201)
   expect(typeof body).toEqual('object')
   expect(body.description).toEqual('test')
   expect(body.username).toEqual('@test')
   expect(body.dueTime).toEqual(dueTime)
   expect(body.dueTimeStatus).toEqual('tomorrow')
-  expect(body.checked).toEqual(true)
+  expect(body.statusTask).toEqual('in-time')
+  expect(body.checked).toEqual(false)
 })
 
 test('POST /tasks 201 dueTimeStatus yesterday', async () => {
   const td = new Date()
-  const tomorrow = new Date(td.getFullYear(), td.getMonth() + 1, td.getDate() - 1)
-  const dueTime = dateDdMm(tomorrow)
+  const tomorrow = new Date(td.getFullYear(), td.getMonth(), td.getDate() - 1)
+  const dueTime = dateMmDd(tomorrow)
   const { status, body } = await request(app())
     .post(`${apiRoot}`)
-    .send({ 'projectId': project.id, description: 'test', username: '@test', dueTime: dueTime, checked: true })
+    .send({ 'projectId': project.id, description: 'test', username: '@test', dueTime: dueTime, checked: false })
   expect(status).toBe(201)
   expect(typeof body).toEqual('object')
   expect(body.description).toEqual('test')
   expect(body.username).toEqual('@test')
   expect(body.dueTime).toEqual(dueTime)
   expect(body.dueTimeStatus).toEqual('yesterday')
-  expect(body.checked).toEqual(true)
+  expect(body.statusTask).toEqual('late')
+  expect(body.checked).toEqual(false)
 })
 
 test('POST /tasks 404 - Invalid project id', async () => {
