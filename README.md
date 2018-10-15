@@ -9,13 +9,21 @@ A RESTful API of a application to manage projects and tasks.
 - [Jest](https://jestjs.io/)
 - [MongoDb](https://www.mongodb.com/)
 
+
 ## How to **Run**
 
-```bash
-npm test # test using Jest
-npm run coverage # test and open the coverage report in the browser
-npm run lint # lint using ESLint
-npm run dev # run the API in development mode
-npm run prod # run the API in production mode
-npm run docs # generate API docs
+
+
+1. First we need to run the MongoDB:
+>Obs: To run the command bellow you need to have Docker and Docker-compose installed in your computer.
+```
+docker-compose up
+```
+
+``` bash
+npm install
+
+npm test
+
+npm run dev
 ```

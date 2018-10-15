@@ -3,6 +3,12 @@ import { Task } from '.'
 import { Project } from '../project'
 
 export const create = ({ bodymen: { body } }, res, next) =>
+{
+  const year = new Date().getFullYear()
+  const date = new Date(`${year}/${body.dueTime}`)
+  if (!isNaN(date.getDate())) {
+    body.dueTimeDate = date
+  }
   Project.findById(body.projectId)
     .then((project) => {
       return project
@@ -17,6 +23,7 @@ export const create = ({ bodymen: { body } }, res, next) =>
     .then((task) => task ? task.view(true) : null)
     .then(success(res, 201))
     .catch(next)
+}
 
 export const index = ({ params }, res, next) => {
   var filter = null
@@ -24,6 +31,7 @@ export const index = ({ params }, res, next) => {
     filter = { project: params.projectId }
   }
   return Task.find(filter)
+    .sort('-dueTimeDate')
     .then((task) => {
       return task
     }, () => {

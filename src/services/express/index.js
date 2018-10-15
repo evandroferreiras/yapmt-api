@@ -10,8 +10,7 @@ import { env } from '../../config'
 export default (apiRoot, routes) => {
   const app = express()
 
-  /* istanbul ignore next */
-  if (env === 'production' || env === 'development') {
+  if (env === 'development') {
     app.use(cors())
     app.use(compression())
     app.use(morgan('dev'))
@@ -40,6 +39,7 @@ export default (apiRoot, routes) => {
       }
       res.status(400).send(returnJson)
     }
+    next()
   })
 
   return app
