@@ -15,4 +15,3 @@ script:
 env:
   global:
   - CXX=g++-4.8
-  - MASTER_KEY=masterKey

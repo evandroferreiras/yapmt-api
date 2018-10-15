@@ -38,6 +38,9 @@ const taskSchema = new Schema({
     },
     required: true
   },
+  dueTimeDate: {
+    type: Date
+  },
   checked: {
     type: Boolean
   }
@@ -77,6 +80,7 @@ taskSchema.methods = {
       description: this.description,
       username: this.username,
       dueTime: this.dueTime,
+      dueTimeDate: this.dueTimeDate,
       checked: this.checked,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
