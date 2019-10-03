@@ -12,13 +12,7 @@ A RESTful API of a application to manage projects and tasks.
 
 ## How to **Run**
 
-
-
-1. First we need to run the MongoDB:
->Obs: To run the command bellow you need to have Docker and Docker-compose installed in your computer.
-```
-docker-compose up
-```
+> First we need to run the MongoDB ([Install from here](https://docs.mongodb.com/manual/installation/))
 
 ``` bash
 npm install
