@@ -27,7 +27,7 @@ const config = {
   test: { },
   development: {
     mongo: {
-      uri: 'mongodb://localhost:27018/yapmt-api-dev',
+      uri: 'mongodb://192.168.99.100:27018/yapmt-api-dev', //docker machine windows ip
       options: {
         debug: true
       }
